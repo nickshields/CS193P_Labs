@@ -22,9 +22,9 @@ struct Card {
     
     //Static vars also don't get stored with individual instances of type
     //They only get stored with the Type: Card
-    static var identifierFactory = 0
+    private static var identifierFactory = 0
     
-    static func getUniqueIdentifier() -> Int {
+    private static func getUniqueIdentifier() -> Int {
         //What is a static function/method?
         //These functions get stored with the Type: Card
         //An individual instance of Card doesn't understand it. (See how it's implemented below)
