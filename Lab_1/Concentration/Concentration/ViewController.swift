@@ -17,7 +17,11 @@ class ViewController: UIViewController {
     
     //MARK: Instance Variables/Properties
     @IBOutlet private var cardButtons: [UIButton]!
-    @IBOutlet private weak var flipCountLabel: UILabel!
+    @IBOutlet private weak var flipCountLabel: UILabel! {
+        didSet {
+            updateFlipCountLabel()
+        }
+    }
     @IBOutlet private weak var scoreLabel: UILabel!
     //lazy vars don't initialize until someone tries to use it
     var numberOfPairsOfCards: Int {
@@ -25,16 +29,28 @@ class ViewController: UIViewController {
     }
     private lazy var game = Concentration(numberOfPairsOfCards: numberOfPairsOfCards)
     
-    private var themes = [ 1: ["🎃", "💍", "⛑", "👻", "🙄", "🤔"],
-                   2: ["😆", "😇", "☺️", "😚", "👓", "😏"],
-                   3: ["🐰", "🦊", "🐨", "🐼", "🐻", "🐯"],
-                   4: ["🐞", "🐌", "🐝", "🦄", "🐺", "🐜"],
-                   5: ["🐛", "🦂", "🦛", "🐆", "🦓", "🐊"],
-                   6: ["🦒", "🦘", "🐃", "🐎", "🐄", "🐂"]
+    private var themes = [ 1: "🎃💍⛑👻🙄🤔",
+                   2: "😆😇☺️😚👓😏",
+                   3: "🐰🦊🐨🐼🐻🐯",
+                   4: "🐞🐌🐝🦄🐺🐜",
+                   5: "🐛🦂🦛🐆🦓🐊",
+                   6: "🦒🦘🐃🐎🐄🐂"
     ]
     
-    private var emojiChoices = ["🎃", "💍", "⛑", "👻", "🙄", "🤔"]
-    private var emoji = [Int:String]()
+    //private var emojiChoices = ["🎃", "💍", "⛑", "👻", "🙄", "🤔"]
+    private var emojiChoices = "🎃💍⛑👻🙄🤔"
+    
+    private var emoji = [Card:String]()
+    
+    private func updateFlipCountLabel(){
+        let attributes: [NSAttributedString.Key:Any] = [
+            .strokeWidth : 5.0,
+            .strokeColor: #colorLiteral(red: 0.9529411793, green: 0.6862745285, blue: 0.1333333403, alpha: 1)
+        ]
+        let attributedString = NSAttributedString(string: "Flip Count: \(game.flipCount)" , attributes: attributes)
+        
+        flipCountLabel.attributedText = attributedString
+    }
     
     
     @IBAction func touchCard(_ sender: UIButton) {
@@ -52,8 +68,8 @@ class ViewController: UIViewController {
         game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1)/2)
         updateViewFromModel()
         //pick new theme
-        self.emojiChoices = self.themes[Int(arc4random_uniform(UInt32(themes.count))) - 1]! //Force unwrap since it will always work!
-        self.emoji = [Int:String]()
+        self.emojiChoices = self.themes[Int(arc4random_uniform(UInt32(themes.count)))]! //Force unwrap since it will always work!
+        self.emoji = [Card:String]()
     }
     
     
@@ -70,15 +86,16 @@ class ViewController: UIViewController {
             }
             
         }
-        flipCountLabel.text = "Flip Count: \(game.flipCount)"
+        updateFlipCountLabel()
         scoreLabel.text = "Score \(game.score)"
     }
     
     private func emoji(for card: Card) -> String {
-        if emoji[card.identifier] == nil, emojiChoices.count > 0 {
-            emoji[card.identifier] = emojiChoices.remove(at: emojiChoices.count.arc4random)
+        if emoji[card] == nil, emojiChoices.count > 0 {
+            let randomStringIndex = emojiChoices.index(emojiChoices.startIndex, offsetBy: emojiChoices.count.arc4random)
+            emoji[card] = String(emojiChoices.remove(at: randomStringIndex))
         }
-        return emoji[card.identifier] ?? "?"
+        return emoji[card] ?? "?"
     }
 }
 

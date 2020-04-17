@@ -8,17 +8,27 @@
 
 import Foundation
 
-struct Card {
+struct Card: Hashable {
     //Major difference between class:
     //Structs have NO inheritance (makes them simpler than a class)
     //MOST IMPORTANCE DIFFERENCE: Structs are value types, classes are reference types  
     //STRUCTS == VALUE TYPES (Stuff gets copied when you pass it around)
     //Classes == think like pointers to objects etc
     
+    func hash(into hasher: inout Hasher){
+        hasher.combine(identifier)
+    }
+    
+    static func ==(lhs: Card, rhs: Card) -> Bool {
+        return lhs.identifier == rhs.identifier
+    }
+
+    
+    
     var isFaceUp = false
     var isMatched = false
     var isSeen = false
-    var identifier: Int
+    private var identifier: Int
     
     //Static vars also don't get stored with individual instances of type
     //They only get stored with the Type: Card
