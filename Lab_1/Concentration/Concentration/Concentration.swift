@@ -10,6 +10,9 @@ import Foundation
 
 struct Concentration {
     
+    let x: String = "hello, world!"
+    lazy var y: String.Index = x.firstIndex(of: ",") ?? x.endIndex
+    
     private(set) var cards = [Card]()
     private(set) var flipCount = 0
     private(set) var score = 0
@@ -66,6 +69,10 @@ struct Concentration {
     mutating func chooseCard(at index: Int){
         assert(cards.indices.contains(index), "Concentration.chooseCard(at: \(index): chosen index not in the cards")
         flipCount += 1
+        var airports = ["YYZ": "Toronto Pearson", "DUB": "Dublin"]
+
+        var keys = airports.keys
+        
         if !cards[index].isMatched {
             //choosing second card
             if let matchIndex = indexOfOneAndOnlyFaceUpCard, matchIndex != index {
